@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.sprouth;
+package xyz.imaginehave.sprouth;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
