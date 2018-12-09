@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.security;
+package xyz.imaginehave.sprouth.user;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
