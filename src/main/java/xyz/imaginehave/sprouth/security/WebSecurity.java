@@ -11,7 +11,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import xyz.imaginehave.sprouth.user.UserDetailsServiceImpl;
+import xyz.imaginehave.sprouth.service.UserDetailsServiceImpl;
 
 import org.springframework.context.annotation.Bean;
 
