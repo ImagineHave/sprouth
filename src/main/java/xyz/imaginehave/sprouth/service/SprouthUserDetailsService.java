@@ -1,5 +1,7 @@
 package xyz.imaginehave.sprouth.service;
 
+import static java.util.Collections.emptyList;
+
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,13 +11,12 @@ import org.springframework.stereotype.Service;
 import xyz.imaginehave.sprouth.entity.ApplicationUser;
 import xyz.imaginehave.sprouth.repository.ApplicationUserRepository;
 
-import static java.util.Collections.emptyList;
-
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class SprouthUserDetailsService implements UserDetailsService {
+	
     private ApplicationUserRepository applicationUserRepository;
 
-    public UserDetailsServiceImpl(ApplicationUserRepository applicationUserRepository) {
+    public SprouthUserDetailsService(ApplicationUserRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
     }
 

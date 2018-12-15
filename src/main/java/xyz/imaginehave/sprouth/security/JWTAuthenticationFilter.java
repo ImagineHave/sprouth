@@ -1,10 +1,6 @@
 package xyz.imaginehave.sprouth.security;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static xyz.imaginehave.sprouth.security.SecurityConstants.EXPIRATION_TIME;
-import static xyz.imaginehave.sprouth.security.SecurityConstants.HEADER_STRING;
-import static xyz.imaginehave.sprouth.security.SecurityConstants.SECRET;
-import static xyz.imaginehave.sprouth.security.SecurityConstants.TOKEN_PREFIX;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,21 +21,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
 import xyz.imaginehave.sprouth.entity.ApplicationUser;
 
-@Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     
 	private AuthenticationManager authenticationManager;
+	private SprouthSecurityProperties securityProperties;
 	
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, SprouthSecurityProperties securityProperties) {
         this.authenticationManager = authenticationManager;
+        this.securityProperties = securityProperties;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req,
-                                                HttpServletResponse res) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
             ApplicationUser creds = new ObjectMapper()
                     .readValue(req.getInputStream(), ApplicationUser.class);
@@ -60,11 +55,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-
-        String token = JWT.create()
+    	
+		String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(HMAC512(SECRET.getBytes()));
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+                .withExpiresAt(new Date(System.currentTimeMillis() + securityProperties.getExpirationTime()))
+                .sign(HMAC512(securityProperties.getSharedKey().getBytes()));
+        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
     }
+    
+    
 }
