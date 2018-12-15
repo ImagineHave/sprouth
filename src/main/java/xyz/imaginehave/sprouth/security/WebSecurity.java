@@ -48,8 +48,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, securityProperties.getSignUpUrl()).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), securityProperties))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), securityProperties))
+                .addFilter(new SprouthJWTAuthenticationFilter(authenticationManager(), securityProperties))
+                .addFilter(new SprouthJWTAuthorizationFilter(authenticationManager(), securityProperties))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
     

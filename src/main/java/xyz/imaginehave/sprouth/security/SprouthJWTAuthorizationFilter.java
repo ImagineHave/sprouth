@@ -16,11 +16,11 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+public class SprouthJWTAuthorizationFilter extends BasicAuthenticationFilter {
 	
 	private SprouthSecurityProperties securityProperties;
 	
-    public JWTAuthorizationFilter(AuthenticationManager authManager, SprouthSecurityProperties securityProperties) {
+    public SprouthJWTAuthorizationFilter(AuthenticationManager authManager, SprouthSecurityProperties securityProperties) {
         super(authManager);
         this.securityProperties = securityProperties;
     }

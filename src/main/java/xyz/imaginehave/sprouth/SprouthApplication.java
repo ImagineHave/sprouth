@@ -16,7 +16,6 @@ public class SprouthApplication {
 	public static void main(String[] args) {
 		log.info("DB_ADDRESS: " + System.getenv("DB_ADDRESS"));
 		log.info("DB_NAME: " + System.getenv("DB_NAME"));
-		log.info("EXPIRATION_TIME: " + System.getenv("EXPIRATION_TIME"));
 		SpringApplication.run(SprouthApplication.class, args);
 	}
 	
