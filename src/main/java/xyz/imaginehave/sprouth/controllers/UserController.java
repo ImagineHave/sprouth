@@ -1,30 +1,42 @@
 package xyz.imaginehave.sprouth.controllers;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import xyz.imaginehave.sprouth.entity.ApplicationUser;
-import xyz.imaginehave.sprouth.repository.ApplicationUserRepository;
+import xyz.imaginehave.sprouth.entity.SprouthGrantedAuthority;
+import xyz.imaginehave.sprouth.entity.SprouthUser;
+import xyz.imaginehave.sprouth.repository.SprouthGrantedAuthorityRespository;
+import xyz.imaginehave.sprouth.repository.SprouthUserRepository;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private ApplicationUserRepository applicationUserRepository;
+    private SprouthUserRepository sprouthApplicationUserRepository;
+    private SprouthGrantedAuthorityRespository sprouthGrantedAuthorityRespository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	public UserController(SprouthUserRepository sprouthApplicationUserRepository, 
+			SprouthGrantedAuthorityRespository sprouthGrantedAuthorityRespository,
+			BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.sprouthApplicationUserRepository = sprouthApplicationUserRepository;
+		this.sprouthGrantedAuthorityRespository = sprouthGrantedAuthorityRespository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
 
-    public UserController(ApplicationUserRepository applicationUserRepository,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.applicationUserRepository = applicationUserRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
 
     @PostMapping("/sign-up")
-    public void signUp(@RequestBody ApplicationUser user) {
+    public void signUp(@RequestBody SprouthUser user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        applicationUserRepository.save(user);
+        Optional<SprouthGrantedAuthority> userAuthority = sprouthGrantedAuthorityRespository.findByAuthority("USER");
+        if(userAuthority.isPresent()) {
+        	user.getAuthorities().add(userAuthority.get());
+        }
+        sprouthApplicationUserRepository.save(user);
     }
 }

@@ -29,9 +29,7 @@ public class SprouthJWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-    	
         String header = req.getHeader(securityProperties.getHeaderString());
-        
         if (header == null || !header.startsWith(securityProperties.getTokenPrefix())) {
             chain.doFilter(req, res);
             return;

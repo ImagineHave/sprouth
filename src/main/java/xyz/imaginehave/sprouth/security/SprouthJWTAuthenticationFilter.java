@@ -15,14 +15,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import xyz.imaginehave.sprouth.entity.ApplicationUser;
+import lombok.extern.slf4j.Slf4j;
+import xyz.imaginehave.sprouth.entity.SprouthUser;
 
+@Slf4j
 public class SprouthJWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     
 	private AuthenticationManager authenticationManager;
@@ -36,8 +37,8 @@ public class SprouthJWTAuthenticationFilter extends UsernamePasswordAuthenticati
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
-            ApplicationUser creds = new ObjectMapper()
-                    .readValue(req.getInputStream(), ApplicationUser.class);
+            SprouthUser creds = new ObjectMapper()
+                    .readValue(req.getInputStream(), SprouthUser.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -57,10 +58,11 @@ public class SprouthJWTAuthenticationFilter extends UsernamePasswordAuthenticati
                                             Authentication auth) throws IOException, ServletException {
     	
 		String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
+                .withSubject(((SprouthUser) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + securityProperties.getExpirationTime()))
                 .sign(HMAC512(securityProperties.getSharedKey().getBytes()));
         res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
+        log.info(token);
     }
     
     
