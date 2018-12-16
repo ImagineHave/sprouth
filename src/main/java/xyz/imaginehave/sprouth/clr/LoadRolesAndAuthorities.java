@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.cli;
+package xyz.imaginehave.sprouth.clr;
 
 import java.util.Optional;
 
@@ -61,7 +61,7 @@ public class LoadRolesAndAuthorities {
 				SprouthRole user = new SprouthRole(USER);
 				log.info("Preloading USER role: " + sprouthRoleRepository.save(user));
 			} else {
-				log.info("USER: " + optionalUser.get());
+				log.info("USER: " + optionalUser.get().getName());
 			}
 			
 			optionalUser = sprouthRoleRepository.findByName(USER);

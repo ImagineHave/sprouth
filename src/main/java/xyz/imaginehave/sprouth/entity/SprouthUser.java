@@ -29,15 +29,24 @@ public class SprouthUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
     private String username;
+	
     private String password;
+    
+    @Column(nullable = false)
     private String email;
+    
     private String firstName;
+    
     private String lastName;
+    
 	private boolean accountNonExpired;
+	
 	private boolean accountNonLocked;
+	
 	private boolean credentialsNonExpired;
+	
 	private boolean enabled;
 	
     @ManyToMany(fetch = FetchType.EAGER)
@@ -53,7 +62,7 @@ public class SprouthUser implements UserDetails {
 		this.setRoles(new HashSet<>());
 		this.setAccountNonExpired(true);
 		this.setAccountNonLocked(true);
-		this.setEnabled(true);
+		this.setEnabled(false);
         this.setCredentialsNonExpired(true);
 	}
 

@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.security;
+package xyz.imaginehave.sprouth.security.filters;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+
+import xyz.imaginehave.sprouth.security.properties.SprouthSecurityProperties;
 
 public class SprouthJWTAuthorizationFilter extends BasicAuthenticationFilter {
 	

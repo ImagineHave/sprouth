@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.security;
+package xyz.imaginehave.sprouth.security.filters;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import xyz.imaginehave.sprouth.entity.SprouthUser;
+import xyz.imaginehave.sprouth.security.properties.SprouthSecurityProperties;
 
 @Slf4j
 public class SprouthJWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
