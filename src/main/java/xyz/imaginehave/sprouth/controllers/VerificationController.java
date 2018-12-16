@@ -26,13 +26,13 @@ public class VerificationController {
     
     @GetMapping("/sprouth/verify-email")
     @ResponseBody
-    public String verifyEmail(String code) {
+    public String verifyEmail(String token) {
     	
-    	if(!sprouthVerficationTokenRepository.findByToken(code).isPresent()) {
-    		throw new VerificationTokenDoesNotExistException("Token does not exist: " + code);
+    	if(!sprouthVerficationTokenRepository.findByToken(token).isPresent()) {
+    		throw new VerificationTokenDoesNotExistException("Token does not exist: " + token);
     	}
     	
-    	SprouthVerificationToken verificationToken = sprouthVerficationTokenRepository.findByToken(code).get();
+    	SprouthVerificationToken verificationToken = sprouthVerficationTokenRepository.findByToken(token).get();
         
     	if(verificationToken.isExpired()) {
     		sprouthVerficationTokenRepository.delete(verificationToken);

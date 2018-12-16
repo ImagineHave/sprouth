@@ -16,6 +16,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import xyz.imaginehave.sprouth.properties.SprouthSecurityProperties;
+import xyz.imaginehave.sprouth.repository.RefreshTokenRepository;
+import xyz.imaginehave.sprouth.repository.SprouthUserRepository;
 import xyz.imaginehave.sprouth.security.filters.SprouthJWTAuthenticationFilter;
 import xyz.imaginehave.sprouth.security.filters.SprouthJWTAuthorizationFilter;
 import xyz.imaginehave.sprouth.service.SprouthUserDetailsService;
@@ -32,6 +34,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     
 	@Autowired
 	private SprouthSecurityProperties securityProperties;
+	
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
+	
+	@Autowired
+	private SprouthUserRepository sprouthUserRepository;
 	
     @Bean
     @Override
@@ -53,13 +61,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(getJWTAuthenticationFilter())
-                .addFilter(new SprouthJWTAuthorizationFilter(authenticationManager(), securityProperties))
+                .addFilter(new SprouthJWTAuthorizationFilter(authenticationManager(), securityProperties, refreshTokenRepository, sprouthUserRepository))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
     
     
     public SprouthJWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception {
-        final SprouthJWTAuthenticationFilter filter = new SprouthJWTAuthenticationFilter(authenticationManager(), securityProperties);
+        final SprouthJWTAuthenticationFilter filter = new SprouthJWTAuthenticationFilter(authenticationManager(), securityProperties, refreshTokenRepository, sprouthUserRepository);
         filter.setFilterProcessesUrl("/sprouth/login");
         return filter;
     }
