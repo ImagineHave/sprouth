@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
+
 import xyz.imaginehave.sprouth.entity.SprouthUser;
 import xyz.imaginehave.sprouth.repository.SprouthUserRepository;
 
@@ -19,10 +21,10 @@ public class SprouthUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SprouthUser applicationUser = applicationUserRepository.findByUsername(username);
-        if (applicationUser == null) {
+        Optional<SprouthUser> applicationUser = applicationUserRepository.findByUsername(username);
+        if (!applicationUser.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
-        return applicationUser;
+        return applicationUser.get();
     }
 }

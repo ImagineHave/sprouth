@@ -8,35 +8,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import xyz.imaginehave.sprouth.entity.SprouthGrantedAuthority;
+import lombok.extern.slf4j.Slf4j;
+import xyz.imaginehave.sprouth.controllers.exceptions.DuplicateKeyException;
+import xyz.imaginehave.sprouth.entity.SprouthRole;
 import xyz.imaginehave.sprouth.entity.SprouthUser;
-import xyz.imaginehave.sprouth.repository.SprouthGrantedAuthorityRespository;
+import xyz.imaginehave.sprouth.repository.SprouthRoleRepository;
 import xyz.imaginehave.sprouth.repository.SprouthUserRepository;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
 
     private SprouthUserRepository sprouthApplicationUserRepository;
-    private SprouthGrantedAuthorityRespository sprouthGrantedAuthorityRespository;
+    private SprouthRoleRepository sprouthRoleRespository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public UserController(SprouthUserRepository sprouthApplicationUserRepository, 
-			SprouthGrantedAuthorityRespository sprouthGrantedAuthorityRespository,
+			SprouthRoleRepository sprouthRoleRespository,
 			BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.sprouthApplicationUserRepository = sprouthApplicationUserRepository;
-		this.sprouthGrantedAuthorityRespository = sprouthGrantedAuthorityRespository;
+		this.sprouthRoleRespository = sprouthRoleRespository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
 
     @PostMapping("/sign-up")
     public void signUp(@RequestBody SprouthUser user) {
+    	
+    	if(sprouthApplicationUserRepository.findByUsername(user.getUsername()).isPresent()) {
+    		throw new DuplicateKeyException("username already in use: " + user.getUsername());
+    	}
+    	
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Optional<SprouthGrantedAuthority> userAuthority = sprouthGrantedAuthorityRespository.findByAuthority("USER");
-        if(userAuthority.isPresent()) {
-        	user.getAuthorities().add(userAuthority.get());
+        Optional<SprouthRole> role = sprouthRoleRespository.findByName("USER");
+        
+        if(role.isPresent()) {
+        	user.getRoles().add(role.get());
         }
+
         sprouthApplicationUserRepository.save(user);
+        log.info("New user added: ", user);
     }
 }

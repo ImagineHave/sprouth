@@ -1,5 +1,6 @@
 package xyz.imaginehave.sprouth.entity;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,8 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
@@ -36,15 +40,31 @@ public class SprouthUser implements UserDetails {
 	private boolean credentialsNonExpired;
 	private boolean enabled;
 	
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable( 
+        name = "users_roles", 
+        joinColumns = @JoinColumn(
+          name = "user_id", referencedColumnName = "id"), 
+        inverseJoinColumns = @JoinColumn(
+          name = "role_id", referencedColumnName = "id")) 
+    private Set<SprouthRole> roles;
+	
 	public SprouthUser() {
-		this.setAuthorities(new HashSet<>());
+		this.setRoles(new HashSet<>());
 		this.setAccountNonExpired(true);
 		this.setAccountNonLocked(true);
 		this.setEnabled(true);
         this.setCredentialsNonExpired(true);
 	}
-	
-	@OneToMany(fetch = FetchType.EAGER)
-	private Set<SprouthGrantedAuthority> authorities;
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		for(SprouthRole role: roles) {
+			authorities.addAll(role.getAuthorities());
+		}
+		return authorities;
+	}
+
 	
 }
