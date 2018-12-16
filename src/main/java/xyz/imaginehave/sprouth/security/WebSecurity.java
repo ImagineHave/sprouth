@@ -48,13 +48,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
     	
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/sprouth/sign-up").permitAll()
-                .antMatchers(HttpMethod.POST, "/sprouth/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/sprouth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new SprouthJWTAuthenticationFilter(authenticationManager(), securityProperties))
+                .addFilter(getJWTAuthenticationFilter())
                 .addFilter(new SprouthJWTAuthorizationFilter(authenticationManager(), securityProperties))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+    
+    
+    public SprouthJWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception {
+        final SprouthJWTAuthenticationFilter filter = new SprouthJWTAuthenticationFilter(authenticationManager(), securityProperties);
+        filter.setFilterProcessesUrl("/sprouth/login");
+        return filter;
     }
     
     

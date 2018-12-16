@@ -63,7 +63,7 @@ public class SprouthJWTAuthenticationFilter extends UsernamePasswordAuthenticati
                 .withExpiresAt(new Date(System.currentTimeMillis() + securityProperties.getExpirationTime()))
                 .sign(HMAC512(securityProperties.getSharedKey().getBytes()));
         res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
-        log.info(token);
+        log.info("SuccessfulAuthentication hit");
     }
     
     

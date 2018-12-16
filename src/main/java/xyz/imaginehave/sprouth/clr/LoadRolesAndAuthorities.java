@@ -1,10 +1,11 @@
 package xyz.imaginehave.sprouth.clr;
 
-import java.util.Optional;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.google.common.base.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import xyz.imaginehave.sprouth.entity.SprouthGrantedAuthority;
