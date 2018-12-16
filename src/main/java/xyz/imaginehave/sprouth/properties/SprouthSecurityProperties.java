@@ -1,4 +1,4 @@
-package xyz.imaginehave.sprouth.security.properties;
+package xyz.imaginehave.sprouth.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -2,6 +2,7 @@ package xyz.imaginehave.sprouth.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Version;
 
 import lombok.Data;
 
@@ -22,6 +24,9 @@ public class SprouthRole {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
  
+	@Version
+	private int version;
+	
     private String name;
     
     @ManyToMany(mappedBy = "roles")
@@ -38,10 +43,12 @@ public class SprouthRole {
     
     public SprouthRole() {
     	this.users = new ArrayList<>();
+    	this.authorities = new HashSet<>();
     }
     
     public SprouthRole(String name) {
 		this.name = name;
+		this.authorities = new HashSet<>();
 	}
     
     @Override

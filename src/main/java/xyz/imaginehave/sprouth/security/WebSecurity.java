@@ -15,9 +15,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import xyz.imaginehave.sprouth.properties.SprouthSecurityProperties;
 import xyz.imaginehave.sprouth.security.filters.SprouthJWTAuthenticationFilter;
 import xyz.imaginehave.sprouth.security.filters.SprouthJWTAuthorizationFilter;
-import xyz.imaginehave.sprouth.security.properties.SprouthSecurityProperties;
 import xyz.imaginehave.sprouth.service.SprouthUserDetailsService;
 
 @Configuration
@@ -49,6 +49,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     	
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sprouth/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/sprouth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(getJWTAuthenticationFilter())

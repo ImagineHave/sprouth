@@ -69,6 +69,10 @@ public class LoadRolesAndAuthorities {
 			
 			if(optionalUser.get().getAuthorities().size() == 0 ) {
 				
+				optionalGET = sprouthGrantedAuthorityRespository.findByAuthority(GET);
+				optionalPOST = sprouthGrantedAuthorityRespository.findByAuthority(POST);
+				optionalDELETE = sprouthGrantedAuthorityRespository.findByAuthority(DELETE);
+				
 				optionalUser.get().getAuthorities().add(optionalGET.get());
 				optionalUser.get().getAuthorities().add(optionalPOST.get());
 				optionalUser.get().getAuthorities().add(optionalDELETE.get());

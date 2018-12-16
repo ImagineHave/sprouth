@@ -1,8 +1,6 @@
 package xyz.imaginehave.sprouth.controllers;
 
 
-import java.io.UnsupportedEncodingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +21,7 @@ import xyz.imaginehave.sprouth.entity.SprouthVerificationToken;
 import xyz.imaginehave.sprouth.repository.SprouthRoleRepository;
 import xyz.imaginehave.sprouth.repository.SprouthUserRepository;
 import xyz.imaginehave.sprouth.repository.SprouthVerficationTokenRepository;
-import xyz.imaginehave.sprouth.service.SprouthSendMail;
-import xyz.imaginehave.sprouth.service.SprouthVerificationTokenService;
+import xyz.imaginehave.sprouth.service.SprouthSendMailService;
 
 @RestController
 @RequestMapping("/sprouth")
@@ -32,7 +29,7 @@ import xyz.imaginehave.sprouth.service.SprouthVerificationTokenService;
 public class UserController {
 
 	@Autowired
-    private SprouthUserRepository sprouthApplicationUserRepository;
+    private SprouthUserRepository sprouthSprouthUserRepository;
 	
 	@Autowired
     private SprouthRoleRepository sprouthRoleRespository;
@@ -44,15 +41,12 @@ public class UserController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	@Autowired
-	SprouthVerificationTokenService sprouthVerificationTokenService;
-	
-	@Autowired
-	SprouthSendMail sprouthSendMail;
+	SprouthSendMailService sprouthSendMail;
 	
     @PostMapping("/sign-up")
     public void signUp(@RequestBody SprouthUser user) {
     	
-    	if(sprouthApplicationUserRepository.findByUsername(user.getUsername()).isPresent()) {
+    	if(sprouthSprouthUserRepository.findByUsername(user.getUsername()).isPresent()) {
     		throw new DuplicateKeyException("username already in use: " + user.getUsername());
     	}
     	
@@ -63,24 +57,19 @@ public class UserController {
         	user.getRoles().add(role.get());
         }
 
-        sprouthApplicationUserRepository.save(user);
-        sprouthVerificationTokenService.createToken(user);
+        sprouthSprouthUserRepository.save(user);
+        SprouthVerificationToken sprouthVerificationToken = createToken(user);
         
         log.info("New user added");
         
+        sprouthSendMail.sendVerificationMail(sprouthVerificationToken);
         
-        
-        try {
-			sprouthSendMail.sendActivationEmail(user);
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage());
-		}
+        log.info("Mail sent");
     }
     
     
-    @PostMapping("/register")
-    public void register(@RequestBody SprouthVerificationToken token) {
-    	
+    @PostMapping("/verify-email")
+    public void verifyEmail(@RequestBody SprouthVerificationToken token) {
     	
     	if(!sprouthVerficationTokenRepository.findByToken(token.getToken()).isPresent()) {
     		throw new VerificationTokenDoesNotExistException("Token does not exist: " + token);
@@ -96,7 +85,7 @@ public class UserController {
     	SprouthUser user = verificationToken.getUser();
 
     	user.setEnabled(true);
-        sprouthApplicationUserRepository.save(user);
+        sprouthSprouthUserRepository.save(user);
         log.info("New user registered");
         sprouthVerficationTokenRepository.delete(verificationToken);
     }
@@ -105,18 +94,29 @@ public class UserController {
     @PostMapping("/resendVerification")
     public void resendVerification(@RequestBody SprouthUser user) {
     	
-    	if(!sprouthApplicationUserRepository.findByUsername(user.getUsername()).isPresent()) {
+    	Optional<SprouthUser> sprouthUser = sprouthSprouthUserRepository.findByUsername(user.getUsername());
+    	
+    	if(!sprouthUser.isPresent()) {
     		throw new NoUserExistsException("That username does not exist: " + user.getUsername());
     	}
     	
-    	Optional<SprouthVerificationToken> verificationToken = sprouthVerficationTokenRepository.findByUser(user);
+    	Optional<SprouthVerificationToken> verificationToken = sprouthVerficationTokenRepository.findByUser(sprouthUser.get());
     	
     	if(verificationToken.isPresent()) {
     		sprouthVerficationTokenRepository.delete(verificationToken.get());
     	}
     	
-        sprouthVerificationTokenService.createToken(user);
+    	SprouthVerificationToken sprouthVerificationToken = createToken(sprouthUser.get());
         
-        log.info("New user added");
+        sprouthSendMail.sendVerificationMail(sprouthVerificationToken);
+        
+        log.info("Verification resent");
     }
+
+
+	private SprouthVerificationToken createToken(SprouthUser user) {
+		SprouthVerificationToken sprouthVerificationToken = new SprouthVerificationToken(user);
+        sprouthVerficationTokenRepository.save(sprouthVerificationToken);
+        return sprouthVerificationToken;
+	}
 }

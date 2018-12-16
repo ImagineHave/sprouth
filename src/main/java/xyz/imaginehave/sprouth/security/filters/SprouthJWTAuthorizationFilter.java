@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import xyz.imaginehave.sprouth.security.properties.SprouthSecurityProperties;
+import xyz.imaginehave.sprouth.properties.SprouthSecurityProperties;
 
 public class SprouthJWTAuthorizationFilter extends BasicAuthenticationFilter {
 	

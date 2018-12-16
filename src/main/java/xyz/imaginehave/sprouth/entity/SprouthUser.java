@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Version;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,9 @@ public class SprouthUser implements UserDetails {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+	
+	@Version
+	private int version;
     
 	@Column(unique = true, nullable = false)
     private String username;
@@ -37,18 +41,25 @@ public class SprouthUser implements UserDetails {
     @Column(nullable = false)
     private String email;
     
+    @Column
     private String firstName;
     
+    @Column
     private String lastName;
     
+    @Column
 	private boolean accountNonExpired;
 	
+    @Column
 	private boolean accountNonLocked;
 	
+    @Column
 	private boolean credentialsNonExpired;
 	
+    @Column
 	private boolean enabled;
 	
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( 
         name = "users_roles", 
